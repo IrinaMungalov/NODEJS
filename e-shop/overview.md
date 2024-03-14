@@ -158,3 +158,53 @@ data.mjs
 
 HW1: make a function called - getCart()
      which using promises will load the cart at the beginning
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Node HTTP / server
+    > http (s): client / server
+
+
+
+
+
+
+
+
+
+
+
+                                                  host machine
+                                                   /
+                        +-------------------------+--------------+
+ BROWSER                |                       node             |
+---------------+        |                         ^              |
+               |        |                main.mjs |              |
+               |        |    3000       +------------+           |
+               |        |   +---------->| server     |           |
+               | HTTP   |  /            .     ^      .           |
+               +--req-->+  localhost          |                  |  handler
+                        |  127.0.0.1          +-----------------------(req,res)
+                        | +----------- zoom                      |          |
+                        |    1052      app1                      |          |
+                        |                                        |          v
+                        |                                        |
+                        .                                        .
+
+
+
+
+
+
+
+                        
