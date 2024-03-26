@@ -1,66 +1,59 @@
 import http from 'node:http'
-import { loadTemplate } from './modules/template.mjs'
-import { getProducts } from './modules/data.mjs'
+import { getProducts, getProductById } from './modules/data.mjs'
+import { render } from './modules/template.mjs'
+import { readFile } from 'node:fs/promises'
 
 
-const server = http.createServer(async (req,res) =>{
-    // HW1: rewrite using switch
+const server = http.createServer(async (req,res) => {
+
+    res.setHeader("Content-type", "text/html")
+
     let html
 
-    switch (req.url) {
-      case "/":
-        html = await loadTemplate("home.html")
-        const products = await getProducts()
+    if (req.url === "/") {       
 
-        let list = ``
-
-        products.forEach(product => {
-            list += `<h2>${product.name}<h2>`
-        })
-
-        html = html.replace("{% CATALOG %}", list);
-
-        break;
-      case "/cart":
-        html = `<h2>Cart details<h2>`;
-        break;
-      case "/pay":
-        html = `<h2>Payment<h2>`;
-        break;
-      default:
-        html = `Oops, not found ;(`;
-        res.statusCode = 404;
-    }
+        const products = await getProducts();
+        html = await render("./pages/home.html", { products: products });
         
-                                // MIME type
-    res.setHeader("Content-type", "text/html")
+    } else if (req.url.startsWith("/images")) {
+
+        html = await readFile(`.${req.url}`)
+        
+    } else if (req.url.startsWith("/buy")) {
+      // "/buy/1"
+
+      // let id = parseInt(req.url.split("/").pop())
+
+      // HW2*: what if "/buy?id=1"
+
+      // let id = parseInt(req.url.match(/\/buy\?id=(\d+)/)[1])
+
+      // HW3: add a checkbox "i agree with terms"
+      //      check of it is checked - server side     
+
+      
+        if (req.method === "POST") {
+
+            html = `You must definitely agree to the terms of service!`;
+        
+        } else {
+
+          // HW1: try to use regexp capture
+          let id = parseInt(req.url.match(/\/buy\/(\d+)/)[1]);
+          let product = await getProductById(id);
+          html = await render("./pages/order.html", { product: product });
+        
+        }
+      
+    } else {
+
+        html = `Oops, not found ;(`
+        res.statusCode = 404
+    } 
+
     res.end(html)
-})
+} )
 
 
 server.listen("3000", "localhost")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
