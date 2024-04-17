@@ -332,3 +332,152 @@ orders.json ----- read --+--> [{},{}]
 orders.json <-- write ----+-----+
                           |
                          stringify
+
+
+
+
+
+
+GET ------------- req ?productId=1&fullName=John+Doe+101&emailAddress=jd101%40example.host&phoneNumber=101&agreeTerms=on ----------->
+                             |
+                            querystring.parse()
+                             v
+                            data = {
+                              id: ...       <-------- uuid()
+                              payed: ...    <-------- false
+                              productId: ...
+                              fullName: ...
+                            }
+                              |
+                              v
+                            saveOrder()
+                              |
+                              v
+                            orders.json
+
+
+
+
+
+
+
+
+
+
+
+
+
+stripe / gateway
+
+  > payment link + redirect
+
+
+
+
+
+  app ------- api / info / product + price + payment link -------> STRIPE
+                                               |
+     <------------ url ------------------------+
+     
+  client ------------ url ----------------------+
+                                                |
+                                              pay/cancel
+                                                |
+                                                v
+        <--------------- redirect --------------+
+
+
+
+
+
+
+
+
+
+
+# e-shop / docker / postgresql
+  > docker
+  > docker-compose
+
+
+
+HOST (linux)
+  \
++--+---------------------------------------------------------------+
+   postgresql-server                
+                |
+                +-- 5432
+
+
+                                             docker-compose.yaml
+                                                  |
+                                                config
+                                                  |
+                                                  v
+                                                docker <------ postgres:16.2-bullseye (image) <---- docker-hub
+  node-pgdb (container)                           |
+      \                                           |
+  +----+-------------------------------+          |
+  |                                    |          |
+  |                 <-----------------------------+  
+  |                                    |
+  |       postgresql-server            |
+  |       |    |        |              | ports
+  |       |    |        +-- 5432 ---------> 10000 <---- psql - no connection
+  |       |    |                       |
+  |       |    +-- e_shop_db           |
+  |       v                            | volumes
+  |  /var/lib/postgresql/data   +---------> /data
+  |                                    |
+  +------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  CASCADING
+      |
+      |   products
+      +---> +-- id    (PK)
+      |     +-- name
+      |     +-- price_amount
+      |     +-- price_currency
+      |     +-- image
+      |
+      |   orders
+      |     +-- id      (PK)
+      +---- +-- productId
+            +-- fullName
+            +-- emailAddress
+            +-- phoneNumber
+            +-- payed
+
+
+
+
+
+
+
+
+
+        nodejs
+          ^
+          |
+         run
+          |
++---------+----------+
+|                    |
+|                    |
+|   app (js)         <------- postgres -----> postgresql-server
+|                    |      (driver/connector)
++--------------------+
+
