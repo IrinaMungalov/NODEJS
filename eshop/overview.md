@@ -481,3 +481,28 @@ HOST (linux)
 |                    |      (driver/connector)
 +--------------------+
 
+
+
+
+
+
+
+
+
+
+
+
+
+/confirm?id=... <------------- redirect <--------- stripe
+|
+v
++- confirmOrder(id)
+|
++- sendConfirmationEmail(id)
+        |
+        +-- connect( ) ------> google smtp --- SMTP ---->
+        |           ^               ^
+        |           |               |
+        |         authentication    |
+        |                           |
+        +-- send() -----------------+
